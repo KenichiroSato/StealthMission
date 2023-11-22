@@ -18,12 +18,14 @@ enemy_device := class(creative_device):
 
     var InitialPosition<private>: vector3 = vector3{X:=0.0, Y:= 0.0, Z:=0.0}
     var InitialRotation<private>: rotation = rotation{}
+    var IsDefeated<private>: logic = false
 
     MinX :float = -18031.0
     MinY :float = -19333.0
     MaxX :float = -9901.0
     MaxY :float = -8720.0
-    AttackDuration :float = 2.0
+    AttackDuration :float = 2.5
+    SleepAfterAttack: float = 1.5
 
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=
@@ -53,7 +55,9 @@ enemy_device := class(creative_device):
                 RotateTowardPlayer(Agent)
                 Wait()
             Attack(Agent)
-            Sleep(1.0)
+            Sleep(SleepAfterAttack)
+            if (IsDefeated = true):
+                break
 
     Wait()<suspends>:void =
         WaitTime := GetRandomFloat(5.0, 15.0)
@@ -93,3 +97,6 @@ enemy_device := class(creative_device):
                     NewRotation := MakeRotationFromYawPitchRollDegrees(Yaw, Pitch, Roll)
                     Enemy.MoveTo(PropLocation, NewRotation, 0.5)
             Sleep(0.0)
+
+    OnDefeated():void =
+        set IsDefeated = true
