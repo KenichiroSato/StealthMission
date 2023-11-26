@@ -53,15 +53,16 @@ battle_manager := class(creative_device):
         HealthBar.TakeDamage(100.0)
         CurrentHp := HealthBar.GetCurrentHp()
         if (CurrentHp = 0.0):
-            OnDefeated()
+            if (Agent := MaybeAgent?):
+                OnDefeated(Agent)
 
     OnPlayerDead():void =
         RemoveHealthBar()
         set CurrentPlayer = false
 
-    OnDefeated():void =
+    OnDefeated(Agent: agent):void =
         Barrier.Disable()
-        Enemy1.OnDefeated()
+        Enemy1.OnDefeated(Agent)
         RemoveHealthBar()
 
 

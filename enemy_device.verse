@@ -18,6 +18,9 @@ enemy_device := class(creative_device):
     var InitialRotation<private>: rotation = rotation{}
     var IsChasing<private>: logic = false
 
+    @editable var Explosive: explosive_device = explosive_device{}
+    @editable var Explosive2: explosive_device = explosive_device{}
+
     @editable var MinX :float = -18031.0
     @editable var MinY :float = -19333.0
     @editable var MaxX :float = -9901.0
@@ -90,5 +93,17 @@ enemy_device := class(creative_device):
                     Enemy.MoveTo(PropLocation, NewRotation, 0.5)
             Sleep(0.0)
 
-    OnDefeated():void =
+    OnDefeated(Agent: agent):void =
+        spawn{Explode(Agent)}
         set IsChasing = false
+        spawn{MoveToGround()}
+
+    Explode(Agent: agent)<suspends>:void =
+        Explosive.Explode(Agent)
+        Sleep(500.0)
+        Explosive2.Explode(Agent)
+
+    MoveToGround()<suspends>:void =
+        PropLocation := Enemy.GetTransform().Translation
+        NewLocation := vector3{X := PropLocation.Z, Y := PropLocation.Z, Z := PropLocation.Z - 100.0}
+        Enemy.MoveTo(NewLocation, Enemy.GetTransform().Rotation, 1.0)
