@@ -13,42 +13,34 @@ using { /UnrealEngine.com/Temporary/SpatialMath }
 enemy_device := class(creative_device):
 
     @editable var Enemy : creative_prop = creative_prop{}
-    @editable var EntranceZone : mutator_zone_device = mutator_zone_device{}
-    @editable var DamageZone : mutator_zone_device = mutator_zone_device{}
 
     var InitialPosition<private>: vector3 = vector3{X:=0.0, Y:= 0.0, Z:=0.0}
     var InitialRotation<private>: rotation = rotation{}
-    var IsDefeated<private>: logic = false
+    var IsChasing<private>: logic = false
 
-    MinX :float = -18031.0
-    MinY :float = -19333.0
-    MaxX :float = -9901.0
-    MaxY :float = -8720.0
-    AttackDuration :float = 2.5
-    SleepAfterAttack: float = 1.5
+    @editable var MinX :float = -18031.0
+    @editable var MinY :float = -19333.0
+    @editable var MaxX :float = -9901.0
+    @editable var MaxY :float = -8720.0
+    @editable var AttackDuration :float = 2.5
+    @editable var SleepAfterAttack: float = 1.5
+    @editable var GoOverParam: float = 1.5 #攻撃時にどれくらい行き過ぎるか
+    @editable var HP: float = 500.0
+    @editable var Name: string = "HedgeHog"
+    @editable var AdjustYaw: float = 90.0
 
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=
         set InitialPosition = Enemy.GetTransform().Translation
         set InitialRotation = Enemy.GetTransform().Rotation
-        DamageZone.AgentEntersEvent.Subscribe(DamagePlayer)
-        EntranceZone.AgentEntersEvent.Subscribe(OnPlayerEntered)
-
-    OnPlayerEntered(Agent: agent):void =
-        spawn{StartChasing(Agent)}
-
-    DamagePlayer(Agent : agent) :void =
-        if (FortniteCharacter : fort_character = Agent.GetFortCharacter[]):
-            Print("DamagePlayer")
-            MyCharacterHealth : float = FortniteCharacter.GetHealth()
-            FortniteCharacter.Damage(MyCharacterHealth)
-            spawn{BackToInitialPosition()}
 
     BackToInitialPosition()<suspends>:void =
+        set IsChasing = false
         Enemy.MoveTo(InitialPosition, InitialRotation, 1.0 )
 
     StartChasing(Agent: agent)<suspends>:void =
         Print("StartChasing")
+        set IsChasing = true
         Sleep(3.0) #プレーヤースポーン直後は無敵期間があるようなのでwait
         loop:
             race:
@@ -56,7 +48,7 @@ enemy_device := class(creative_device):
                 Wait()
             Attack(Agent)
             Sleep(SleepAfterAttack)
-            if (IsDefeated = true):
+            if (IsChasing = false):
                 break
 
     Wait()<suspends>:void =
@@ -71,8 +63,8 @@ enemy_device := class(creative_device):
             PropLocation := Enemy.GetTransform().Translation
             Xdiff := PlayerLocation.X - PropLocation.X
             Ydiff := PlayerLocation.Y - PropLocation.Y
-            var NewX :float = PropLocation.X + 1.5*Xdiff
-            var NewY :float = PropLocation.Y + 1.5*Ydiff
+            var NewX :float = PropLocation.X + GoOverParam*Xdiff
+            var NewY :float = PropLocation.Y + GoOverParam*Ydiff
             if (NewX < MinX):
                 set NewX = MinX
             if (NewX > MaxX):
@@ -91,7 +83,7 @@ enemy_device := class(creative_device):
                 PropLocation := Enemy.GetTransform().Translation
                 PlayerLocation := PlayerCharacter.GetTransform().Translation
                 if (LookDirection := (PropLocation - PlayerLocation).MakeUnitVector[]):
-                    Yaw := RadiansToDegrees(ArcTan(LookDirection.Y, LookDirection.X)) + 90.0
+                    Yaw := RadiansToDegrees(ArcTan(LookDirection.Y, LookDirection.X)) + AdjustYaw
                     Pitch := 0.0 #RadiansToDegrees(ArcTan(LookDirection.Z, Sqrt((LookDirection.X * LookDirection.X) + (LookDirection.Y * LookDirection.Y))))
                     Roll := 0.0
                     NewRotation := MakeRotationFromYawPitchRollDegrees(Yaw, Pitch, Roll)
@@ -99,4 +91,4 @@ enemy_device := class(creative_device):
             Sleep(0.0)
 
     OnDefeated():void =
-        set IsDefeated = true
+        set IsChasing = false

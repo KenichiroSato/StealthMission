@@ -38,7 +38,7 @@ health_bar := class(creative_device):
         set iCurrentHP = BossTotalHP
         set BarColorHex = ColorHex
         if (Current := Int[iCurrentHP], Total := Int[iTotalHP]):
-            #HPBarTitleTextBlock.SetText(HPTitleText("{iBossName}: {Current}/{Total}"))
+            HPBarTitleTextBlock.SetText(HPTitleText("{iBossName}"))
 
     GetCurrentHp(): float =
         return iCurrentHP
@@ -52,7 +52,7 @@ health_bar := class(creative_device):
         BarSize := BossBarColorBase.GetDesiredSize()
         NewHealthBarWidth := BarSize.X * HealthPercentage
         if (Current := Int[iCurrentHP], Total := Int[iTotalHP]):
-            #HPBarTitleTextBlock.SetText(HPTitleText("{iBossName}: {Current}/{Total}"))
+            HPBarTitleTextBlock.SetText(HPTitleText("{iBossName}"))
         
         UpdateHealthBar(NewHealthBarWidth)
     

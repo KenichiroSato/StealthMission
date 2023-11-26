@@ -1,5 +1,6 @@
 
 using { /Fortnite.com/Devices }
+using { /Fortnite.com/Characters}
 using { /Verse.org/Simulation }
 using { /UnrealEngine.com/Temporary/Diagnostics }
 
@@ -11,6 +12,7 @@ battle_manager := class(creative_device):
     @editable Enemy1: enemy_device = enemy_device{}
     @editable EntranceZone : mutator_zone_device = mutator_zone_device{}
     @editable DamageTrigger: trigger_device = trigger_device{}
+    @editable var PlayerDeadZone : mutator_zone_device = mutator_zone_device{}
     @editable Barrier: barrier_device = barrier_device{}
 
     var CurrentPlayer: ?player = false
@@ -20,15 +22,27 @@ battle_manager := class(creative_device):
     OnBegin<override>()<suspends>:void= 
         EntranceZone.AgentEntersEvent.Subscribe(OnPlayerEntered)
         DamageTrigger.TriggeredEvent.Subscribe(OnDamage)
+        PlayerDeadZone.AgentEntersEvent.Subscribe(DamagePlayer)
 
     OnPlayerEntered(Agent: agent):void =
+        if (not CurrentPlayer = false):
+            return
         if (Player := player[Agent]):
             set CurrentPlayer = option{Player}
-            InitHealthBar("", "ff0000")
+            InitHealthBar(Enemy1.Name, "ff0000")
+            spawn{Enemy1.StartChasing(Agent)}
+
+    DamagePlayer(Agent : agent) :void =
+        if (FortniteCharacter : fort_character = Agent.GetFortCharacter[]):
+            Print("DamagePlayer")
+            MyCharacterHealth : float = FortniteCharacter.GetHealth()
+            FortniteCharacter.Damage(MyCharacterHealth)
+            spawn{Enemy1.BackToInitialPosition()}
+            OnPlayerDead()
 
     InitHealthBar<private>(Name: string, Color: string):void =
         if (Player := CurrentPlayer?):
-            HealthBar.Init(Name, 1000.0, Color)
+            HealthBar.Init(Name, Enemy1.HP, Color)
             HealthBar.ShowUIForPlayer(Player)
 
     RemoveHealthBar():void =
@@ -36,10 +50,14 @@ battle_manager := class(creative_device):
             HealthBar.RemoveHealthBar(Player)
 
     OnDamage(MaybeAgent: ?agent):void =
-        HealthBar.TakeDamage(200.0)
+        HealthBar.TakeDamage(100.0)
         CurrentHp := HealthBar.GetCurrentHp()
         if (CurrentHp = 0.0):
             OnDefeated()
+
+    OnPlayerDead():void =
+        RemoveHealthBar()
+        set CurrentPlayer = false
 
     OnDefeated():void =
         Barrier.Disable()
