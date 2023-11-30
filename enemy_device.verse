@@ -20,7 +20,7 @@ enemy_device := class(creative_device):
 
     @editable var Explosive: explosive_device = explosive_device{}
     @editable var Explosive2: explosive_device = explosive_device{}
-    @editable Missile1: missile_device = missile_device{}
+    @editable Missiles: []missile_device = array{}
 
     @editable var MinX :float = -18031.0
     @editable var MinY :float = -19333.0
@@ -40,14 +40,14 @@ enemy_device := class(creative_device):
 
     BackToInitialPosition()<suspends>:void =
         set IsChasing = false
-        Missile1.Stop()
+        StopMissiles()
         Enemy.MoveTo(InitialPosition, InitialRotation, 1.0 )
 
     StartChasing(Agent: agent)<suspends>:void =
         Print("StartChasing")
         set IsChasing = true
         Sleep(3.0) #プレーヤースポーン直後は無敵期間があるようなのでwait
-        spawn{Missile1.Start(Agent)}
+        spawn{StartMissiles(Agent)}
         loop:
             race:
                 RotateTowardPlayer(Agent)
@@ -99,7 +99,7 @@ enemy_device := class(creative_device):
     OnDefeated(Agent: agent):void =
         spawn{Explode(Agent)}
         set IsChasing = false
-        Missile1.Stop()
+        StopMissiles()
         spawn{MoveToGround()}
 
     Explode(Agent: agent)<suspends>:void =
@@ -111,3 +111,13 @@ enemy_device := class(creative_device):
         PropLocation := Enemy.GetTransform().Translation
         NewLocation := vector3{X := PropLocation.Z, Y := PropLocation.Z, Z := PropLocation.Z - 100.0}
         Enemy.MoveTo(NewLocation, Enemy.GetTransform().Rotation, 1.0)
+
+    StartMissiles<private>(Agent: agent)<suspends>:void =
+        for(Index : int = 0..Missiles.Length - 1 ):
+            if(Missile := Missiles[Index]):
+                Missile.Start(Agent)
+
+    StopMissiles<private>():void =
+        for(Index : int = 0..Missiles.Length - 1 ):
+            if(Missile := Missiles[Index]):
+                Missile.Stop()

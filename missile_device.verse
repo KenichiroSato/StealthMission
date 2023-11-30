@@ -2,6 +2,7 @@
 using { /Fortnite.com/Devices }
 using { /Fortnite.com/Characters}
 using { /Verse.org/Simulation }
+using { /Verse.org/Random }
 using { /UnrealEngine.com/Temporary/Diagnostics }
 using { /UnrealEngine.com/Temporary/SpatialMath }
 
@@ -12,10 +13,9 @@ missile_device := class(creative_device):
 
     @editable var BulletAnker : creative_prop = creative_prop{}
     @editable var BulletFly : creative_prop = creative_prop{}
-    @editable EntranceZone : mutator_zone_device = mutator_zone_device{}
     @editable var Explosive: explosive_device = explosive_device{}
 
-    @editable var SleepAfterAttack: float = 10.0
+    @editable var MaxWaitAfterAttack: float = 10.0
     @editable var AttackDuration:float = 1.5
 
     var IsChasing:logic = false
@@ -24,21 +24,11 @@ missile_device := class(creative_device):
 
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=
-        EntranceZone.AgentEntersEvent.Subscribe(OnPlayerEntered)
-        EntranceZone.AgentExitsEvent.Subscribe(OnPlayerExit)
         set InitialPosition = BulletFly.GetTransform().Translation
         set InitialRotation = BulletFly.GetTransform().Rotation
 
-    OnPlayerEntered(Agent: agent):void =
-        set IsChasing = true
-        #spawn{Start(Agent)}
-
-    OnPlayerExit(Agent: agent):void ={}
-        #set IsChasing = true
-
     Stop():void =
         set IsChasing = false
-
 
     Start(Agent: agent)<suspends>:void =
         set IsChasing = true
@@ -46,10 +36,16 @@ missile_device := class(creative_device):
             Attack(Agent)
             Explosive.Explode(Agent)
             HideBullet()
-            Sleep(SleepAfterAttack)
+            Wait()
             Explosive.Reset()
             if (IsChasing = false):
                 break
+
+    Wait()<suspends>:void =
+        WaitTime := GetRandomFloat(4.0, MaxWaitAfterAttack)
+        #Print("Wait for {WaitTime} seconds")
+        Sleep(WaitTime)
+
 
     Attack(Agent: agent)<suspends>:void =
         Reload()
