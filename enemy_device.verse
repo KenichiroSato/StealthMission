@@ -20,6 +20,7 @@ enemy_device := class(creative_device):
 
     @editable var Explosive: explosive_device = explosive_device{}
     @editable var Explosive2: explosive_device = explosive_device{}
+    @editable Missile1: missile_device = missile_device{}
 
     @editable var MinX :float = -18031.0
     @editable var MinY :float = -19333.0
@@ -39,12 +40,14 @@ enemy_device := class(creative_device):
 
     BackToInitialPosition()<suspends>:void =
         set IsChasing = false
+        Missile1.Stop()
         Enemy.MoveTo(InitialPosition, InitialRotation, 1.0 )
 
     StartChasing(Agent: agent)<suspends>:void =
         Print("StartChasing")
         set IsChasing = true
         Sleep(3.0) #プレーヤースポーン直後は無敵期間があるようなのでwait
+        spawn{Missile1.Start(Agent)}
         loop:
             race:
                 RotateTowardPlayer(Agent)
@@ -96,6 +99,7 @@ enemy_device := class(creative_device):
     OnDefeated(Agent: agent):void =
         spawn{Explode(Agent)}
         set IsChasing = false
+        Missile1.Stop()
         spawn{MoveToGround()}
 
     Explode(Agent: agent)<suspends>:void =

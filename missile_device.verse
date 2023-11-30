@@ -15,42 +15,56 @@ missile_device := class(creative_device):
     @editable EntranceZone : mutator_zone_device = mutator_zone_device{}
     @editable var Explosive: explosive_device = explosive_device{}
 
-    @editable var SleepAfterAttack: float = 1.0
-    @editable var AttackDuration:float = 2.0
+    @editable var SleepAfterAttack: float = 10.0
+    @editable var AttackDuration:float = 1.5
 
     var IsChasing:logic = false
+    var InitialPosition<private>: vector3 = vector3{X:=0.0, Y:= 0.0, Z:=0.0}
+    var InitialRotation<private>: rotation = rotation{}
 
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=
         EntranceZone.AgentEntersEvent.Subscribe(OnPlayerEntered)
         EntranceZone.AgentExitsEvent.Subscribe(OnPlayerExit)
+        set InitialPosition = BulletFly.GetTransform().Translation
+        set InitialRotation = BulletFly.GetTransform().Rotation
 
     OnPlayerEntered(Agent: agent):void =
         set IsChasing = true
-        spawn{Start(Agent)}
+        #spawn{Start(Agent)}
 
-    OnPlayerExit(Agent: agent):void =
+    OnPlayerExit(Agent: agent):void ={}
+        #set IsChasing = true
+
+    Stop():void =
         set IsChasing = false
 
 
     Start(Agent: agent)<suspends>:void =
+        set IsChasing = true
         loop:
             Attack(Agent)
             Explosive.Explode(Agent)
+            HideBullet()
             Sleep(SleepAfterAttack)
             Explosive.Reset()
             if (IsChasing = false):
                 break
 
     Attack(Agent: agent)<suspends>:void =
-        ResetBulletLocation()
+        Reload()
         Print("Attack")
         if (PlayerCharacter := Agent.GetFortCharacter[]):
             PlayerLocation := PlayerCharacter.GetTransform().Translation
             BulletFly.MoveTo(PlayerLocation, BulletFly.GetTransform().Rotation, AttackDuration)
 
-    ResetBulletLocation()<suspends>:void =
-        InitialPosition := BulletAnker.GetTransform().Translation
-        InitialRotation := BulletAnker.GetTransform().Rotation
+    Reload<private>()<suspends>:void =
+        StartPosition := BulletAnker.GetTransform().Translation
+        StartRotation := BulletAnker.GetTransform().Rotation
+        if (BulletFly.TeleportTo[StartPosition, StartRotation]):
+            Print("Reload")
+
+    HideBullet<private>()<suspends>:void =
         if (BulletFly.TeleportTo[InitialPosition, InitialRotation]):
-            Print("TeleportTo")
+            Print("Hide")
+
