@@ -109,13 +109,13 @@ enemy_device := class(creative_device):
 
     MoveToGround()<suspends>:void =
         PropLocation := Enemy.GetTransform().Translation
-        NewLocation := vector3{X := PropLocation.Z, Y := PropLocation.Z, Z := PropLocation.Z - 100.0}
-        Enemy.MoveTo(NewLocation, Enemy.GetTransform().Rotation, 1.0)
+        NewLocation := vector3{X := PropLocation.X, Y := PropLocation.Y, Z := PropLocation.Z - 100.0}
+        Enemy.MoveTo(NewLocation, Enemy.GetTransform().Rotation, 10.0)
 
     StartMissiles<private>(Agent: agent)<suspends>:void =
         for(Index : int = 0..Missiles.Length - 1 ):
             if(Missile := Missiles[Index]):
-                Missile.Start(Agent)
+                spawn{Missile.Start(Agent)}
 
     StopMissiles<private>():void =
         for(Index : int = 0..Missiles.Length - 1 ):

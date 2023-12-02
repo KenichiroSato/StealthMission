@@ -35,10 +35,10 @@ battle_manager := class(creative_device):
     DamagePlayer(Agent : agent) :void =
         if (FortniteCharacter : fort_character = Agent.GetFortCharacter[]):
             Print("DamagePlayer")
+            OnPlayerDead()
             MyCharacterHealth : float = FortniteCharacter.GetHealth()
             FortniteCharacter.Damage(MyCharacterHealth)
             spawn{Enemy1.BackToInitialPosition()}
-            OnPlayerDead()
 
     InitHealthBar<private>(Name: string, Color: string):void =
         if (Player := CurrentPlayer?):
