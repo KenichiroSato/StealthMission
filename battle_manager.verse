@@ -14,6 +14,8 @@ battle_manager := class(creative_device):
     @editable DamageTrigger: trigger_device = trigger_device{}
     @editable var PlayerDeadZone : mutator_zone_device = mutator_zone_device{}
     @editable Barrier: barrier_device = barrier_device{}
+    @editable LineManager: lines_manager = lines_manager{}
+    @editable IsLasBoss: logic = false
 
     var CurrentPlayer: ?player = false
     HealthBar : health_bar = health_bar{}
@@ -50,11 +52,27 @@ battle_manager := class(creative_device):
             HealthBar.RemoveHealthBar(Player)
 
     OnDamage(MaybeAgent: ?agent):void =
-        HealthBar.TakeDamage(100.0)
-        CurrentHp := HealthBar.GetCurrentHp()
-        if (CurrentHp = 0.0):
-            if (Agent := MaybeAgent?):
+        if (Agent := MaybeAgent?):
+            HealthBar.TakeDamage(100.0)
+            CurrentHp := HealthBar.GetCurrentHp()
+            if (CurrentHp = 0.0):
                 OnDefeated(Agent)
+            if (IsLasBoss = true):
+                if (CurrentHp = 100.0):
+                    spawn{StartScene6(Agent)}
+                if (CurrentHp = 0.0):
+                    spawn{StartScene7(Agent)}
+
+    StartScene6(Agent: agent)<suspends>:void =
+        Scene6Duration := LineManager.GetScene6Duration()
+        spawn{Enemy1.StartOnlyRotate(Agent, Scene6Duration)}
+        LineManager.OnScene6(Agent)
+        Sleep(Scene6Duration)
+
+    StartScene7(Agent: agent)<suspends>:void =
+        Sleep(4.0)
+        LineManager.OnScene7(Agent)
+
 
     OnPlayerDead():void =
         RemoveHealthBar()

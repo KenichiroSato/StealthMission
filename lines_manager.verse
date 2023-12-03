@@ -24,8 +24,6 @@ lines_manager := class(creative_device):
     @editable Scene3Trigger : mutator_zone_device = mutator_zone_device{}
     @editable Scene4Trigger : mutator_zone_device = mutator_zone_device{}
     @editable Scene5Trigger : mutator_zone_device = mutator_zone_device{}
-    @editable Scene6Trigger : mutator_zone_device = mutator_zone_device{}
-    @editable Scene7Trigger : mutator_zone_device = mutator_zone_device{}
 
     var MaybeMyUIPerPlayer : [player]?canvas = map{}
 
@@ -38,8 +36,6 @@ lines_manager := class(creative_device):
         Scene3Trigger.AgentEntersEvent.Subscribe(OnScene3)
         Scene4Trigger.AgentEntersEvent.Subscribe(OnScene4)
         Scene5Trigger.AgentEntersEvent.Subscribe(OnScene5)
-        Scene6Trigger.AgentEntersEvent.Subscribe(OnScene6)
-        Scene7Trigger.AgentEntersEvent.Subscribe(OnScene7)
 
     OnScene1(Agent: agent):void =
         spawn{StartLines(Agent, Scene1LinesList)}
@@ -82,13 +78,23 @@ lines_manager := class(creative_device):
         else:
             return 7.0
 
+    GetScene6Duration(): float =
+        return GetTotalDuration(Scene6LinesList)
+    
+    GetTotalDuration<private>(Lines: []line): float =
+        var TotalDuration:float = 0.0
+        for(Index : int = 0..Lines.Length - 1 ):
+            if (Line := Lines[Index]):
+                set TotalDuration += GetDuration(Line.Duration)
+        return TotalDuration
+
     # UI作成
     CreateMyUI(Line: line): canvas=
          # キャンバスウィジェット
         MyCanvas : canvas = canvas:
             Slots := array:
                 canvas_slot: #Character
-                    Anchors := anchors{Minimum := vector2{X := 0.1, Y := 0.2}, Maximum := vector2{X := 0.1, Y := 0.2} }
+                    Anchors := anchors{Minimum := vector2{X := 0.1, Y := 0.3}, Maximum := vector2{X := 0.1, Y := 0.3} }
                     Offsets := margin{Top := 50.0, Left := 10.0, Bottom := 0.0, Right := 0.0}
                     Alignment := vector2{X := 0.5, Y := 0.5}
                     ZOrder := 0
@@ -97,7 +103,7 @@ lines_manager := class(creative_device):
                         DefaultImage := Line.Character
                         DefaultDesiredSize := vector2{X := 200.0, Y := 200.0} 
                 canvas_slot: #Sentence
-                    Anchors := anchors{Minimum := vector2{X := 0.5, Y := 0.2}, Maximum := vector2{X := 0.5, Y := 0.2} }
+                    Anchors := anchors{Minimum := vector2{X := 0.5, Y := 0.35}, Maximum := vector2{X := 0.5, Y := 0.35} }
                     Offsets := margin{Top := 0.0, Left := 20.0, Right := 0.0, Bottom := 0.0}
                     Alignment := vector2{X := 0.5, Y := 0.5}
                     SizeToContent := true

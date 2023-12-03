@@ -52,10 +52,21 @@ enemy_device := class(creative_device):
             race:
                 RotateTowardPlayer(Agent)
                 Wait()
+            if (IsChasing = false):
+                break
             Attack(Agent)
             Sleep(SleepAfterAttack)
             if (IsChasing = false):
                 break
+
+    StartOnlyRotate(Agent: agent, Duration:float)<suspends>:void =
+        set IsChasing = false
+        StopMissiles()
+        race:
+            RotateTowardPlayer(Agent)
+            Sleep(Duration)
+        StartChasing(Agent)
+
 
     Wait()<suspends>:void =
         WaitTime := GetRandomFloat(5.0, 15.0)
@@ -109,8 +120,8 @@ enemy_device := class(creative_device):
 
     MoveToGround()<suspends>:void =
         PropLocation := Enemy.GetTransform().Translation
-        NewLocation := vector3{X := PropLocation.X, Y := PropLocation.Y, Z := PropLocation.Z - 100.0}
-        Enemy.MoveTo(NewLocation, Enemy.GetTransform().Rotation, 10.0)
+        NewLocation := vector3{X := PropLocation.X, Y := PropLocation.Y, Z := PropLocation.Z - 10000.0}
+        Enemy.MoveTo(NewLocation, Enemy.GetTransform().Rotation, 1.0)
 
     StartMissiles<private>(Agent: agent)<suspends>:void =
         for(Index : int = 0..Missiles.Length - 1 ):
