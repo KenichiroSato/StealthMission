@@ -10,6 +10,7 @@ gate_device := class(creative_device):
 
     @editable Guards: []guard_spawner_device = array{}
     @editable Gate: barrier_device = barrier_device{}
+    @editable AlertIcon: hud_message_device = hud_message_device{}
 
     var SuspiciousCount: int = 0
 
@@ -27,6 +28,7 @@ gate_device := class(creative_device):
         set SuspiciousCount += 1
         Print("SuspiciousCount={SuspiciousCount}")
         Gate.Enable()
+        AlertIcon.Show()
         Print("Enable!")
 
     OnUnaware(Agent:agent):void =
@@ -34,4 +36,5 @@ gate_device := class(creative_device):
         Print("SuspiciousCount={SuspiciousCount}")
         if (SuspiciousCount < 1):
             Gate.Disable()
+            AlertIcon.Hide()
             Print("Disable")
