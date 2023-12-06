@@ -33,6 +33,7 @@ battle_manager := class(creative_device):
             set CurrentPlayer = option{Player}
             InitHealthBar(Enemy1.Name, "ff0000")
             spawn{Enemy1.StartChasing(Agent)}
+            Barrier.Enable()
 
     DamagePlayer(Agent : agent) :void =
         if (FortniteCharacter : fort_character = Agent.GetFortCharacter[]):

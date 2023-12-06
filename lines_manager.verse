@@ -24,6 +24,8 @@ lines_manager := class(creative_device):
     @editable Scene3Trigger : mutator_zone_device = mutator_zone_device{}
     @editable Scene4Trigger : mutator_zone_device = mutator_zone_device{}
     @editable Scene5Trigger : mutator_zone_device = mutator_zone_device{}
+    @editable CardKeyButtons: []conditional_button_device = array{}
+    @editable FrontAttackTrigger: trigger_device = trigger_device{}
 
     var MaybeMyUIPerPlayer : [player]?canvas = map{}
 
@@ -36,6 +38,17 @@ lines_manager := class(creative_device):
         Scene3Trigger.AgentEntersEvent.Subscribe(OnScene3)
         Scene4Trigger.AgentEntersEvent.Subscribe(OnScene4)
         Scene5Trigger.AgentEntersEvent.Subscribe(OnScene5)
+        FrontAttackTrigger.TriggeredEvent.Subscribe(OnFrontAttack)
+        for(Index : int = 0..CardKeyButtons.Length - 1 ):
+            if(CardKeyButton := CardKeyButtons[Index]):
+                CardKeyButton.NotEnoughItemsEvent.Subscribe(OnCardKey)
+
+    OnFrontAttack(MaybeAgent: ?agent):void =
+        if (Agent := MaybeAgent?):
+            spawn{StartLines(Agent, WeakspotLinesList)}
+
+    OnCardKey(Agent: agent):void =
+        spawn{StartLines(Agent, CardKeyLinesList)}
 
     OnScene1(Agent: agent):void =
         spawn{StartLines(Agent, Scene1LinesList)}
@@ -210,4 +223,12 @@ lines_manager := class(creative_device):
         line {Character := assets.noah,          Sentence := assets.s7_6, Duration := duration.Short},
         line {Character := assets.aresCommander, Sentence := assets.s7_7, Duration := duration.Short},
         line {Character := assets.noah,          Sentence := assets.s7_8, Duration := duration.Long}
+    }
+
+    CardKeyLinesList : []line = array{
+        line {Character := assets.aresCommander, Sentence := assets.s_cardkey, Duration := duration.Long}
+    }
+
+    WeakspotLinesList : []line = array{
+        line {Character := assets.aresCommander, Sentence := assets.s_weakspot, Duration := duration.Long}
     }
