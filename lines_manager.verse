@@ -50,6 +50,9 @@ lines_manager := class(creative_device):
     OnCardKey(Agent: agent):void =
         spawn{StartLines(Agent, CardKeyLinesList)}
 
+    OnPlayerDead(Agent: agent):void =
+        spawn{StartLines(Agent, PlayerDeadLinesList)}
+
     OnScene1(Agent: agent):void =
         spawn{StartLines(Agent, Scene1LinesList)}
 
@@ -87,9 +90,9 @@ lines_manager := class(creative_device):
 
     GetDuration<private>(Duration: duration):float =
         if (Duration = duration.Short):
-            return 3.0
+            return 4.0
         else:
-            return 7.0
+            return 8.0
 
     GetScene6Duration(): float =
         return GetTotalDuration(Scene6LinesList)
@@ -141,12 +144,12 @@ lines_manager := class(creative_device):
         line {Character := assets.noah,          Sentence := assets.s1_2, Duration := duration.Short},
         line {Character := assets.aresCommander, Sentence := assets.s1_3, Duration := duration.Short},
         line {Character := assets.aresCommander, Sentence := assets.s1_4, Duration := duration.Long},
-        line {Character := assets.aresCommander, Sentence := assets.s1_5, Duration := duration.Short},
+        line {Character := assets.aresCommander, Sentence := assets.s1_5, Duration := duration.Long},
         line {Character := assets.aresCommander, Sentence := assets.s1_6, Duration := duration.Long},
         line {Character := assets.noah,          Sentence := assets.s1_7, Duration := duration.Short},
         line {Character := assets.noah,          Sentence := assets.s1_8, Duration := duration.Long},
         line {Character := assets.aresCommander, Sentence := assets.s1_9, Duration := duration.Short},
-        line {Character := assets.aresCommander, Sentence := assets.s1_10, Duration := duration.Short},
+        line {Character := assets.aresCommander, Sentence := assets.s1_10, Duration := duration.Long},
         line {Character := assets.aresCommander, Sentence := assets.s1_11, Duration := duration.Long},
         line {Character := assets.aresCommander, Sentence := assets.s1_12, Duration := duration.Short},
         line {Character := assets.noah,          Sentence := assets.s1_13, Duration := duration.Short}
@@ -161,7 +164,7 @@ lines_manager := class(creative_device):
         line {Character := assets.noah,     Sentence := assets.s2_6, Duration := duration.Short},
         line {Character := assets.noah,     Sentence := assets.s2_7, Duration := duration.Short},
         line {Character := assets.selenian, Sentence := assets.s2_8, Duration := duration.Short},
-        line {Character := assets.selenian, Sentence := assets.s2_9, Duration := duration.Short},
+        line {Character := assets.selenian, Sentence := assets.s2_9, Duration := duration.Long},
         line {Character := assets.noah,     Sentence := assets.s2_10, Duration := duration.Short},
         line {Character := assets.noah,     Sentence := assets.s2_11, Duration := duration.Long},
         line {Character := assets.selenian, Sentence := assets.s2_12, Duration := duration.Long}
@@ -231,4 +234,8 @@ lines_manager := class(creative_device):
 
     WeakspotLinesList : []line = array{
         line {Character := assets.aresCommander, Sentence := assets.s_weakspot, Duration := duration.Long}
+    }
+
+    PlayerDeadLinesList : []line = array{
+        line {Character := assets.aresCommander, Sentence := assets.s_noah, Duration := duration.Short}
     }

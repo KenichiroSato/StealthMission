@@ -14,7 +14,9 @@ battle_manager := class(creative_device):
     @editable DamageTrigger: trigger_device = trigger_device{}
     @editable var PlayerDeadZone : mutator_zone_device = mutator_zone_device{}
     @editable Barrier: barrier_device = barrier_device{}
+    @editable Beacon: beacon_device = beacon_device{}
     @editable LineManager: lines_manager = lines_manager{}
+    @editable BgmManager: bgm_manager = bgm_manager{}
     @editable IsLasBoss: logic = false
 
     var CurrentPlayer: ?player = false
@@ -34,11 +36,12 @@ battle_manager := class(creative_device):
             InitHealthBar(Enemy1.Name, "ff0000")
             spawn{Enemy1.StartChasing(Agent)}
             Barrier.Enable()
+            BgmManager.PlayBattleBgm(IsLasBoss)
 
     DamagePlayer(Agent : agent) :void =
         if (FortniteCharacter : fort_character = Agent.GetFortCharacter[]):
             Print("DamagePlayer")
-            OnPlayerDead()
+            OnPlayerDead(Agent)
             MyCharacterHealth : float = FortniteCharacter.GetHealth()
             FortniteCharacter.Damage(MyCharacterHealth)
             spawn{Enemy1.BackToInitialPosition()}
@@ -75,7 +78,8 @@ battle_manager := class(creative_device):
         LineManager.OnScene7(Agent)
 
 
-    OnPlayerDead():void =
+    OnPlayerDead(Agent : agent):void =
+        LineManager.OnPlayerDead(Agent)
         RemoveHealthBar()
         set CurrentPlayer = false
 
@@ -83,5 +87,7 @@ battle_manager := class(creative_device):
         Barrier.Disable()
         Enemy1.OnDefeated(Agent)
         RemoveHealthBar()
+        Beacon.Enable()
+        BgmManager.PlayNormalBgm()
 
 
