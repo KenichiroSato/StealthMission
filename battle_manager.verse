@@ -81,6 +81,7 @@ battle_manager := class(creative_device):
     OnPlayerDead(Agent : agent):void =
         LineManager.OnPlayerDead(Agent)
         RemoveHealthBar()
+        BgmManager.PlayDead()
         set CurrentPlayer = false
 
     OnDefeated(Agent: agent):void =
@@ -88,6 +89,7 @@ battle_manager := class(creative_device):
         Enemy1.OnDefeated(Agent)
         RemoveHealthBar()
         Beacon.Enable()
+        BgmManager.PlayDefeat()
         BgmManager.PlayNormalBgm()
 
 

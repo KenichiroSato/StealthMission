@@ -11,10 +11,20 @@ bgm_manager := class(creative_device):
     @editable LasBossBgmPlayer: audio_player_device = audio_player_device{}
     @editable BattleBgmPlayer: audio_player_device = audio_player_device{}
     @editable NormalBgmPlayer: audio_player_device = audio_player_device{}
+    @editable DeadPlayer: audio_player_device = audio_player_device{}
+    @editable DefeatPlayer: audio_player_device = audio_player_device{}
 
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=
         PlayNormalBgm()
+
+    PlayDead():void =
+        Print("PlayDead")
+        DeadPlayer.Play()
+
+    PlayDefeat():void =
+        Print("PlayDefeat")
+        DefeatPlayer.Play()
 
     PlayNormalBgm():void =
         Print("PlayNormalBgm")
@@ -26,8 +36,8 @@ bgm_manager := class(creative_device):
         Print("PlayBattleBgm")
         NormalBgmPlayer.Stop()
         if (IsLasBoss = true):
-            LasBossBgmPlayer.Play()
-            BattleBgmPlayer.Stop()
+            LasBossBgmPlayer.Stop()
+            BattleBgmPlayer.Play()
         else:
             LasBossBgmPlayer.Stop()
             BattleBgmPlayer.Play()
