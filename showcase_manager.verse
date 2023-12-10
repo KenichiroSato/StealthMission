@@ -20,7 +20,7 @@ showcase_manager := class(creative_device):
 
     DisplayShowcase()<suspends>:void =
         PropLocation := ShowCaseProp.GetTransform().Translation
-        NewLocation := vector3{X := PropLocation.X, Y := PropLocation.Y, Z := PropLocation.Z + 1000.0}
+        NewLocation := vector3{X := PropLocation.X, Y := PropLocation.Y, Z := PropLocation.Z + 3000.0}
         ShowCaseProp.MoveTo(NewLocation, ShowCaseProp.GetTransform().Rotation, 1.5)
         BeaconShowcase.Enable()
         Light.TurnOn()
