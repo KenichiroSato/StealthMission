@@ -13,6 +13,7 @@ showcase_manager := class(creative_device):
     @editable BeaconShowcase: beacon_device = beacon_device{}
     @editable Light: customizable_light_device = customizable_light_device{}
     @editable Light2: customizable_light_device = customizable_light_device{}
+    @editable Light3: customizable_light_device = customizable_light_device{}
 
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void= {}
@@ -24,5 +25,6 @@ showcase_manager := class(creative_device):
         BeaconShowcase.Enable()
         Light.TurnOn()
         Light2.TurnOn()
+        Light3.TurnOn()
 
 

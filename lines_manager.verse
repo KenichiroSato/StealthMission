@@ -229,7 +229,8 @@ lines_manager := class(creative_device):
         line {Character := assets.noah,          Sentence := assets.s7_5, Duration := duration.Short},
         line {Character := assets.noah,          Sentence := assets.s7_6, Duration := duration.Short},
         line {Character := assets.aresCommander, Sentence := assets.s7_7, Duration := duration.Short},
-        line {Character := assets.noah,          Sentence := assets.s7_8, Duration := duration.Long}
+        line {Character := assets.noah,          Sentence := assets.s7_8, Duration := duration.Long},
+        line {Character := assets.empty,         Sentence := assets.s7_9, Duration := duration.Long}
     }
 
     CardKeyLinesList : []line = array{
