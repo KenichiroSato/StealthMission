@@ -19,6 +19,7 @@ battle_manager := class(creative_device):
     @editable BgmManager: bgm_manager = bgm_manager{}
     @editable Scene5Trigger : mutator_zone_device = mutator_zone_device{}
     @editable IsLasBoss: logic = false
+    @editable ShowcaseManager: showcase_manager = showcase_manager{}
 
     var CurrentPlayer: ?player = false
     var IsScene5Playing : logic = false
@@ -85,7 +86,7 @@ battle_manager := class(creative_device):
                 if (CurrentHp = 100.0):
                     spawn{StartScene6(Agent)}
                 if (CurrentHp = 0.0):
-                    spawn{StartScene7(Agent)}
+                    spawn{StartEndScene(Agent)}
 
     StartScene6(Agent: agent)<suspends>:void =
         Scene6Duration := LineManager.GetScene6Duration()
@@ -93,9 +94,12 @@ battle_manager := class(creative_device):
         LineManager.OnScene6(Agent)
         Sleep(Scene6Duration)
 
-    StartScene7(Agent: agent)<suspends>:void =
+    StartEndScene(Agent: agent)<suspends>:void =
         Sleep(4.0)
         LineManager.OnScene7(Agent)
+        Sleep(LineManager.GetScene7Duration())
+        ShowcaseManager.DisplayShowcase()
+        BgmManager.PlayEndrollBgm()
 
 
     OnPlayerDead(Agent : agent):void =
@@ -111,5 +115,4 @@ battle_manager := class(creative_device):
         Beacon.Enable()
         BgmManager.PlayDefeat()
         BgmManager.PlayNormalBgm()
-
 

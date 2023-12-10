@@ -8,7 +8,7 @@ using { /Fortnite.com/Playspaces }
 # A Verse-authored creative device that can be placed in a level
 bgm_manager := class(creative_device):
 
-    @editable LasBossBgmPlayer: audio_player_device = audio_player_device{}
+    @editable EndrollBgmPlayer: audio_player_device = audio_player_device{}
     @editable BattleBgmPlayer: audio_player_device = audio_player_device{}
     @editable NormalBgmPlayer: audio_player_device = audio_player_device{}
     @editable DeadPlayer: audio_player_device = audio_player_device{}
@@ -28,21 +28,17 @@ bgm_manager := class(creative_device):
 
     PlayNormalBgm():void =
         Print("PlayNormalBgm")
-        LasBossBgmPlayer.Stop()
+        EndrollBgmPlayer.Stop()
         BattleBgmPlayer.Stop()
         NormalBgmPlayer.Play()
 
     PlayBattleBgm(IsLasBoss: logic):void =
         Print("PlayBattleBgm")
         NormalBgmPlayer.Stop()
-        if (IsLasBoss = true):
-            LasBossBgmPlayer.Stop()
-            BattleBgmPlayer.Play()
-        else:
-            LasBossBgmPlayer.Stop()
-            BattleBgmPlayer.Play()
+        EndrollBgmPlayer.Stop()
+        BattleBgmPlayer.Play()
 
-    PlayLassBossBgm():void =
+    PlayEndrollBgm():void =
         NormalBgmPlayer.Stop()
         BattleBgmPlayer.Stop()
-        LasBossBgmPlayer.Play()
+        EndrollBgmPlayer.Play()

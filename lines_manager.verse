@@ -92,6 +92,9 @@ lines_manager := class(creative_device):
         else:
             return 8.0
 
+    GetScene7Duration(): float =
+        return GetTotalDuration(Scene7LinesList)
+
     GetScene6Duration(): float =
         return GetTotalDuration(Scene6LinesList)
 
