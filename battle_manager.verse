@@ -17,9 +17,11 @@ battle_manager := class(creative_device):
     @editable Beacon: beacon_device = beacon_device{}
     @editable LineManager: lines_manager = lines_manager{}
     @editable BgmManager: bgm_manager = bgm_manager{}
+    @editable Scene5Trigger : mutator_zone_device = mutator_zone_device{}
     @editable IsLasBoss: logic = false
 
     var CurrentPlayer: ?player = false
+    var IsScene5Playing : logic = false
     HealthBar : health_bar = health_bar{}
 
     # Runs when the device is started in a running game
@@ -27,6 +29,7 @@ battle_manager := class(creative_device):
         EntranceZone.AgentEntersEvent.Subscribe(OnPlayerEntered)
         DamageTrigger.TriggeredEvent.Subscribe(OnDamage)
         PlayerDeadZone.AgentEntersEvent.Subscribe(DamagePlayer)
+        Scene5Trigger.AgentEntersEvent.Subscribe(OnScene5)
 
     OnPlayerEntered(Agent: agent):void =
         if (not CurrentPlayer = false):
@@ -34,9 +37,26 @@ battle_manager := class(creative_device):
         if (Player := player[Agent]):
             set CurrentPlayer = option{Player}
             InitHealthBar(Enemy1.Name, "ff0000")
-            spawn{Enemy1.StartChasing(Agent)}
+            if (IsLasBoss = true):
+                if(IsScene5Playing = false):
+                    spawn{Enemy1.StartChasing(Agent)}
+            else:
+                spawn{Enemy1.StartChasing(Agent)}
             Barrier.Enable()
             BgmManager.PlayBattleBgm(IsLasBoss)
+
+    OnScene5(Agent: agent):void =
+        spawn{StartScene5(Agent)}
+
+    StartScene5(Agent: agent)<suspends>:void =
+        if (IsScene5Playing = true):
+            return
+        set IsScene5Playing = true
+        Scene5Duration := LineManager.GetScene5Duration()
+        spawn{Enemy1.StartOnlyRotate(Agent, Scene5Duration)}
+        LineManager.OnScene5(Agent)
+        Sleep(Scene5Duration)
+        set IsScene5Playing = false
 
     DamagePlayer(Agent : agent) :void =
         if (FortniteCharacter : fort_character = Agent.GetFortCharacter[]):

@@ -23,7 +23,6 @@ lines_manager := class(creative_device):
     @editable Scene2Trigger : mutator_zone_device = mutator_zone_device{}
     @editable Scene3Trigger : mutator_zone_device = mutator_zone_device{}
     @editable Scene4Trigger : mutator_zone_device = mutator_zone_device{}
-    @editable Scene5Trigger : mutator_zone_device = mutator_zone_device{}
     @editable CardKeyButtons: []conditional_button_device = array{}
     @editable FrontAttackTrigger: trigger_device = trigger_device{}
 
@@ -37,7 +36,6 @@ lines_manager := class(creative_device):
         Scene2Trigger.AgentEntersEvent.Subscribe(OnScene2)
         Scene3Trigger.AgentEntersEvent.Subscribe(OnScene3)
         Scene4Trigger.AgentEntersEvent.Subscribe(OnScene4)
-        Scene5Trigger.AgentEntersEvent.Subscribe(OnScene5)
         FrontAttackTrigger.TriggeredEvent.Subscribe(OnFrontAttack)
         for(Index : int = 0..CardKeyButtons.Length - 1 ):
             if(CardKeyButton := CardKeyButtons[Index]):
@@ -96,7 +94,10 @@ lines_manager := class(creative_device):
 
     GetScene6Duration(): float =
         return GetTotalDuration(Scene6LinesList)
-    
+
+    GetScene5Duration(): float =
+        return GetTotalDuration(Scene5LinesList)
+
     GetTotalDuration<private>(Lines: []line): float =
         var TotalDuration:float = 0.0
         for(Index : int = 0..Lines.Length - 1 ):
