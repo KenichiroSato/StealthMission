@@ -11,9 +11,7 @@ showcase_manager := class(creative_device):
 
     @editable ShowCaseProp : creative_prop = creative_prop{}
     @editable BeaconShowcase: beacon_device = beacon_device{}
-    @editable Light: customizable_light_device = customizable_light_device{}
-    @editable Light2: customizable_light_device = customizable_light_device{}
-    @editable Light3: customizable_light_device = customizable_light_device{}
+    @editable Lights: []customizable_light_device = array{}
 
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void= {}
@@ -23,8 +21,8 @@ showcase_manager := class(creative_device):
         NewLocation := vector3{X := PropLocation.X, Y := PropLocation.Y, Z := PropLocation.Z + 3000.0}
         ShowCaseProp.MoveTo(NewLocation, ShowCaseProp.GetTransform().Rotation, 1.5)
         BeaconShowcase.Enable()
-        Light.TurnOn()
-        Light2.TurnOn()
-        Light3.TurnOn()
+        for (Index := 0..Lights.Length -1):
+            if (Light := Lights[Index]):
+                Light.TurnOn()
 
 

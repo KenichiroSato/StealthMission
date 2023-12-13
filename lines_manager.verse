@@ -29,6 +29,7 @@ lines_manager := class(creative_device):
     var MaybeMyUIPerPlayer : [player]?canvas = map{}
 
     var IsStarted: logic = false
+    var LinesProvider: lines_provider = english_lines_provider{}
 
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=
@@ -41,36 +42,42 @@ lines_manager := class(creative_device):
             if(CardKeyButton := CardKeyButtons[Index]):
                 CardKeyButton.NotEnoughItemsEvent.Subscribe(OnCardKey)
 
+    SetLinesProvider(Language: language):void =
+        if (Language = language.Japanese):
+            set LinesProvider = japanese_lines_provider{}
+        else:
+            set LinesProvider = english_lines_provider{}
+
     OnFrontAttack(MaybeAgent: ?agent):void =
         if (Agent := MaybeAgent?):
-            spawn{StartLines(Agent, WeakspotLinesList)}
+            spawn{StartLines(Agent, LinesProvider.WeakspotLinesList())}
 
     OnCardKey(Agent: agent):void =
-        spawn{StartLines(Agent, CardKeyLinesList)}
+        spawn{StartLines(Agent, LinesProvider.CardKeyLinesList())}
 
     OnPlayerDead(Agent: agent):void =
-        spawn{StartLines(Agent, PlayerDeadLinesList)}
+        spawn{StartLines(Agent, LinesProvider.PlayerDeadLinesList())}
 
     OnScene1(Agent: agent):void =
-        spawn{StartLines(Agent, Scene1LinesList)}
+        spawn{StartLines(Agent, LinesProvider.Scene1LinesList())}
 
     OnScene2(Agent: agent):void =
-        spawn{StartLines(Agent, Scene2LinesList)}
+        spawn{StartLines(Agent, LinesProvider.Scene2LinesList())}
 
     OnScene3(Agent: agent):void =
-        spawn{StartLines(Agent, Scene3LinesList)}
+        spawn{StartLines(Agent, LinesProvider.Scene3LinesList())}
 
     OnScene4(Agent: agent):void =
-        spawn{StartLines(Agent, Scene4LinesList)}
+        spawn{StartLines(Agent, LinesProvider.Scene4LinesList())}
 
     OnScene5(Agent: agent):void =
-        spawn{StartLines(Agent, Scene5LinesList)}
+        spawn{StartLines(Agent, LinesProvider.Scene5LinesList())}
 
     OnScene6(Agent: agent):void =
-        spawn{StartLines(Agent, Scene6LinesList)}
+        spawn{StartLines(Agent, LinesProvider.Scene6LinesList())}
 
     OnScene7(Agent: agent):void =
-        spawn{StartLines(Agent, Scene7LinesList)}
+        spawn{StartLines(Agent, LinesProvider.Scene7LinesList())}
 
     StartLines(Agent: agent, Lines: []line)<suspends>:void =
         if (IsStarted = true):
@@ -93,13 +100,13 @@ lines_manager := class(creative_device):
             return 8.0
 
     GetScene7Duration(): float =
-        return GetTotalDuration(Scene7LinesList)
+        return GetTotalDuration(LinesProvider.Scene7LinesList())
 
     GetScene6Duration(): float =
-        return GetTotalDuration(Scene6LinesList)
+        return GetTotalDuration(LinesProvider.Scene6LinesList())
 
     GetScene5Duration(): float =
-        return GetTotalDuration(Scene5LinesList)
+        return GetTotalDuration(LinesProvider.Scene5LinesList())
 
     GetTotalDuration<private>(Lines: []line): float =
         var TotalDuration:float = 0.0
@@ -143,104 +150,3 @@ lines_manager := class(creative_device):
             # データ上のプレイヤーに紐づくUIを削除(false)
             if (set MaybeMyUIPerPlayer[Message.Player] = false){}
  
-    Scene1LinesList : []line = array{
-        line {Character := assets.aresCommander, Sentence := assets.s1_1, Duration := duration.Short},
-        line {Character := assets.noah,          Sentence := assets.s1_2, Duration := duration.Short},
-        line {Character := assets.aresCommander, Sentence := assets.s1_3, Duration := duration.Short},
-        line {Character := assets.aresCommander, Sentence := assets.s1_4, Duration := duration.Long},
-        line {Character := assets.aresCommander, Sentence := assets.s1_5, Duration := duration.Long},
-        line {Character := assets.aresCommander, Sentence := assets.s1_6, Duration := duration.Long},
-        line {Character := assets.noah,          Sentence := assets.s1_7, Duration := duration.Short},
-        line {Character := assets.noah,          Sentence := assets.s1_8, Duration := duration.Long},
-        line {Character := assets.aresCommander, Sentence := assets.s1_9, Duration := duration.Short},
-        line {Character := assets.aresCommander, Sentence := assets.s1_10, Duration := duration.Long},
-        line {Character := assets.aresCommander, Sentence := assets.s1_11, Duration := duration.Long},
-        line {Character := assets.aresCommander, Sentence := assets.s1_12, Duration := duration.Short},
-        line {Character := assets.noah,          Sentence := assets.s1_13, Duration := duration.Short}
-    }
-
-    Scene2LinesList : []line = array{
-        line {Character := assets.selenian, Sentence := assets.s2_1, Duration := duration.Long},
-        line {Character := assets.noah,     Sentence := assets.s2_2, Duration := duration.Short},
-        line {Character := assets.selenian, Sentence := assets.s2_3, Duration := duration.Short},
-        line {Character := assets.selenian, Sentence := assets.s2_4, Duration := duration.Long},
-        line {Character := assets.noah,     Sentence := assets.s2_5, Duration := duration.Short},
-        line {Character := assets.noah,     Sentence := assets.s2_6, Duration := duration.Short},
-        line {Character := assets.noah,     Sentence := assets.s2_7, Duration := duration.Short},
-        line {Character := assets.selenian, Sentence := assets.s2_8, Duration := duration.Short},
-        line {Character := assets.selenian, Sentence := assets.s2_9, Duration := duration.Long},
-        line {Character := assets.noah,     Sentence := assets.s2_10, Duration := duration.Short},
-        line {Character := assets.noah,     Sentence := assets.s2_11, Duration := duration.Long},
-        line {Character := assets.selenian, Sentence := assets.s2_12, Duration := duration.Long}
-    }
-
-    Scene3LinesList : []line = array{
-        line {Character := assets.selenian, Sentence := assets.s3_1, Duration := duration.Long},
-        line {Character := assets.selenian, Sentence := assets.s3_2, Duration := duration.Long},
-        line {Character := assets.noah,     Sentence := assets.s3_3, Duration := duration.Short},
-        line {Character := assets.selenian, Sentence := assets.s3_4, Duration := duration.Long},
-        line {Character := assets.noah,     Sentence := assets.s3_5, Duration := duration.Short},
-        line {Character := assets.selenian, Sentence := assets.s3_6, Duration := duration.Long},
-        line {Character := assets.selenian, Sentence := assets.s3_7, Duration := duration.Long},
-        line {Character := assets.aresCommander, Sentence := assets.s3_8, Duration := duration.Long},
-        line {Character := assets.selenian, Sentence := assets.s3_9, Duration := duration.Long}
-    }
-
-    Scene4LinesList : []line = array{
-        line {Character := assets.selenian, Sentence := assets.s4_1, Duration := duration.Short},
-        line {Character := assets.selenian, Sentence := assets.s4_2, Duration := duration.Long},
-        line {Character := assets.selenian, Sentence := assets.s4_3, Duration := duration.Long},
-        line {Character := assets.selenian, Sentence := assets.s4_4, Duration := duration.Long},
-        line {Character := assets.noah,     Sentence := assets.s4_5, Duration := duration.Short},
-        line {Character := assets.noah,     Sentence := assets.s4_6, Duration := duration.Short},
-        line {Character := assets.aresCommander, Sentence := assets.s4_7, Duration := duration.Long},
-        line {Character := assets.noah, Sentence := assets.s4_8, Duration := duration.Short},
-        line {Character := assets.selenian, Sentence := assets.s4_9, Duration := duration.Long},
-        line {Character := assets.selenian, Sentence := assets.s4_10, Duration := duration.Long},
-        line {Character := assets.noah,     Sentence := assets.s4_11, Duration := duration.Short}
-    }
-
-    Scene5LinesList : []line = array{
-        line {Character := assets.selenian, Sentence := assets.s5_1, Duration := duration.Short},
-        line {Character := assets.noah,     Sentence := assets.s5_2, Duration := duration.Short},
-        line {Character := assets.selenian, Sentence := assets.s5_3, Duration := duration.Long},
-        line {Character := assets.selenian, Sentence := assets.s5_4, Duration := duration.Long},
-        line {Character := assets.noah,     Sentence := assets.s5_5, Duration := duration.Short},
-        line {Character := assets.aresCommander,     Sentence := assets.s5_6, Duration := duration.Long}
-    }
-
-    Scene6LinesList : []line = array{
-        line {Character := assets.selenian, Sentence := assets.s6_1, Duration := duration.Short},
-        line {Character := assets.selenian, Sentence := assets.s6_2, Duration := duration.Long},
-        line {Character := assets.selenian, Sentence := assets.s6_3, Duration := duration.Long},
-        line {Character := assets.selenian, Sentence := assets.s6_4, Duration := duration.Short},
-        line {Character := assets.noah,     Sentence := assets.s6_5, Duration := duration.Long},
-        line {Character := assets.aresCommander, Sentence := assets.s6_6, Duration := duration.Long},
-        line {Character := assets.noah,     Sentence := assets.s6_7, Duration := duration.Long},
-        line {Character := assets.aresCommander, Sentence := assets.s6_8, Duration := duration.Long},
-        line {Character := assets.noah,     Sentence := assets.s6_9, Duration := duration.Short}
-    }
-
-    Scene7LinesList : []line = array{
-        line {Character := assets.aresCommander, Sentence := assets.s7_1, Duration := duration.Long},
-        line {Character := assets.noah,          Sentence := assets.s7_2, Duration := duration.Short},
-        line {Character := assets.noah,          Sentence := assets.s7_3, Duration := duration.Short},
-        line {Character := assets.aresCommander, Sentence := assets.s7_4, Duration := duration.Long},
-        line {Character := assets.noah,          Sentence := assets.s7_5, Duration := duration.Short},
-        line {Character := assets.noah,          Sentence := assets.s7_6, Duration := duration.Short},
-        line {Character := assets.aresCommander, Sentence := assets.s7_7, Duration := duration.Short},
-        line {Character := assets.noah,          Sentence := assets.s7_8, Duration := duration.Long},
-        line {Character := assets.empty,         Sentence := assets.s7_9, Duration := duration.Long}
-    }
-
-    CardKeyLinesList : []line = array{
-        line {Character := assets.aresCommander, Sentence := assets.s_cardkey, Duration := duration.Long}
-    }
-
-    WeakspotLinesList : []line = array{
-        line {Character := assets.aresCommander, Sentence := assets.s_weakspot, Duration := duration.Long}
-    }
-
-    PlayerDeadLinesList : []line = array{
-        line {Character := assets.aresCommander, Sentence := assets.s_noah, Duration := duration.Short}
-    }

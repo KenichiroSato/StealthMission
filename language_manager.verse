@@ -15,6 +15,7 @@ language_manager := class(creative_device):
     @editable Dialog: popup_dialog_device = popup_dialog_device{}
     @editable SpawnDevice:player_spawner_device = player_spawner_device{}
     @editable GoldGranter: item_granter_device = item_granter_device{}
+    @editable LinesManager: lines_manager = lines_manager{}
 
     var CurrentLang: language = language.None
 
@@ -47,3 +48,4 @@ language_manager := class(creative_device):
         else:
             set CurrentLang = language.None
             Print("None")
+        LinesManager.SetLinesProvider(CurrentLang)
